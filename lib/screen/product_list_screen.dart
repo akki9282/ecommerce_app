@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/controller/product_list_controller.dart';
+import 'package:ecommerce_app/screen/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -31,6 +32,7 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -45,7 +47,10 @@ class _ProductListState extends State<ProductList> {
           ),
         ),
         actions: [
-          Image.asset('assets/go_to_cart.png')
+          GestureDetector(
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Cart())),
+              child: Image.asset('assets/go_to_cart.png'))
           // Icon(Icons.shopping_cart, color: Colors.black),
         ],
       ),
@@ -57,8 +62,8 @@ class _ProductListState extends State<ProductList> {
                   color: Colors.black,
                 ),
               )
-            : ListView.builder(
-                shrinkWrap: true,
+            : GridView.builder(
+                shrinkWrap: false,
                 itemCount: productListController
                     .productListModel?.value?.productList?.length,
                 itemBuilder: (context, index) {
@@ -199,7 +204,7 @@ class _ProductListState extends State<ProductList> {
                         // Color.fromARGB(255, 255, 242, 220),
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Column(children: [
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,7 +214,10 @@ class _ProductListState extends State<ProductList> {
                               child: Container(
                                 margin: EdgeInsets.all(10),
                                 padding: EdgeInsets.all(10),
-                                height: h * 0.15,
+                                height: MediaQuery.of(context).orientation ==
+                                        Orientation.portrait
+                                    ? h * 0.15
+                                    : w * 0.15,
                                 // width: 50,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -248,7 +256,7 @@ class _ProductListState extends State<ProductList> {
                             Expanded(
                               flex: 3,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
                                     margin: EdgeInsets.all(5),
@@ -281,7 +289,18 @@ class _ProductListState extends State<ProductList> {
                                               fontSize: 16,
                                               fontWeight: FontWeight.w900),
                                         ),
-                                        Image.asset('assets/add_to_cart.png')
+                                        GestureDetector(
+                                            onTap: () async {
+                                              await productListController.addToCart(
+                                                  productList:
+                                                      productListController
+                                                              .productListModel
+                                                              ?.value
+                                                              ?.productList?[
+                                                          index]);
+                                            },
+                                            child: Image.asset(
+                                                'assets/add_to_cart.png'))
                                       ],
                                     ),
                                   ),
@@ -295,10 +314,6 @@ class _ProductListState extends State<ProductList> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // Text('Rating : ',
-                              //     style: TextStyle(
-                              //         fontSize: 15,
-                              //         fontWeight: FontWeight.w600)),
                               RatingBar.builder(
                                 itemSize: 23,
                                 ignoreGestures: true,
@@ -331,8 +346,12 @@ class _ProductListState extends State<ProductList> {
                     ),
                   );
                 },
-                // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                //     crossAxisCount: 1),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 1.6,
+                    crossAxisCount: MediaQuery.of(context).orientation ==
+                            Orientation.portrait
+                        ? 1
+                        : 2),
               ),
       )),
     );

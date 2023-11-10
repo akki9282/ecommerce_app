@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../local_database/database_config.dart';
+import '../local_database/sql_query.dart';
 import '../model/product_list_model.dart';
 
 class RxNullable<T> {
@@ -17,16 +20,31 @@ class ProductListController extends GetxController {
   Rx<ProductListModel?>? productListModel =
       RxNullable<ProductListModel?>().setNull();
 
-  getProductList() async {
-    var response = await dio.request(
-      'https://fakestoreapi.com/products',
-      options: Options(
-        method: 'GET',
-      ),
-    );
+  Rx<List<CartValue?>?>? cartProduct =
+      RxNullable<List<CartValue?>?>().setNull();
 
-    if (response.statusCode == 200) {
-      productListModel?.value = ProductListModel.fromJson(response.data);
-    } else {}
+  getProductList() async {
+    try {
+      var response = await dio.request(
+        'https://fakestoreapi.com/products',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        productListModel?.value = ProductListModel.fromJson(response.data);
+      } else {}
+    } catch (e) {
+      Fluttertoast.showToast(msg: '${e}');
+    }
+  }
+
+  addToCart({required ProductList? productList}) async {
+    SQLQuery().addToCart(productList: productList);
+  }
+
+  getCartProduct() async {
+    cartProduct?.value = await SQLQuery().getCartProduct();
   }
 }
