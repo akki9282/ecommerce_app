@@ -28,14 +28,49 @@ class SQLQuery {
     } else {
       int a = await database.into(database.cartValues).insert(
           CartValuesCompanion.insert(
+              id: Value(productList?.id ?? 0),
               title: productList?.title ?? '',
               price: productList?.price ?? 0.0,
               description: productList?.title ?? '',
               category: productList?.title ?? '',
-              image_url: productList?.title ?? '',
+              image_url: productList?.image ?? '',
               quantity: 1));
 
       print(a);
+    }
+  }
+
+  deleteItemFromCart({required int id}) async {
+    int a = await (database.delete(database.cartValues)
+          ..where((t) => t.id.equals(id)))
+        .go();
+    print(a);
+  }
+
+  increseCartQuantity({required int id, required int quantity}) async {
+    await (database.update(database.cartValues)..where((t) => t.id.equals(id)))
+        .write(
+      CartValuesCompanion(
+        quantity: Value(
+          (quantity + 1),
+        ),
+      ),
+    );
+  }
+
+  decreseCartQuantity({required int id, required int quantity}) async {
+    if (quantity == 1) {
+      await deleteItemFromCart(id: id);
+    } else {
+      await (database.update(database.cartValues)
+            ..where((t) => t.id.equals(id)))
+          .write(
+        CartValuesCompanion(
+          quantity: Value(
+            (quantity - 1),
+          ),
+        ),
+      );
     }
   }
 }

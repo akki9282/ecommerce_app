@@ -12,11 +12,11 @@ dependencies:
   get:
   dio:
   fluttertoast:
-  flutter_rating_bar: ^4.0.1
-  drift: ^2.12.1
-  sqlite3_flutter_libs: ^0.5.0
-  path_provider: ^2.0.0
-  path: ^1.8.3
+  flutter_rating_bar:
+  drift:
+  sqlite3_flutter_libs:
+  path_provider:
+  path:
 
 dev_dependencies:
   flutter_test:
