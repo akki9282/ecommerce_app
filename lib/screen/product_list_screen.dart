@@ -204,7 +204,15 @@ class _ProductListState extends State<ProductList> {
                                                 '${productListController.productListModel?.value?.productList?[index].description ?? ''}'),
                                             Center(
                                                 child: GestureDetector(
-                                              onTap: () {},
+                                              onTap: () async {
+                                                await productListController.addToCart(
+                                                    productList:
+                                                        productListController
+                                                                .productListModel
+                                                                ?.value
+                                                                ?.productList?[
+                                                            index]);
+                                              },
                                               child: Container(
                                                 width: double.infinity,
                                                 margin: EdgeInsets.all(15),
